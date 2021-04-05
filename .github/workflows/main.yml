@@ -1,43 +1,27 @@
-name: Deploy on new content dispatch
-on:
-  repository_dispatch:
-    types: [merge-content]
-
+name: Build Vue
+on: [push]
 jobs:
-  mergeContent:
+  build_vue:
     runs-on: ubuntu-latest
+    name: Build Vue
     steps:
     - uses: actions/checkout@v2
-    - name: Clone submodules
-      uses: actions/checkout@v2
+    - id: Build-Vue
+      uses: ashkantaravati/NuxtToGithubPages@v1.0
       with:
-        token: ${{ secrets.DISPATCH_HOOK_TOKEN }}
-        submodules: true
-
-    - name: Update submodules content
-      run: git submodule update --remote --recursive  
-    - name: Pull the content
-      run: git pull
-    - name: Update submodules index
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        # Required
-        commit_message: Update submodule
-
-        # Optional commit user and author settings
-        commit_user_name: My GitHub Actions Bot
-        commit_user_email: actions@github.com # to change
-        commit_author: My GitHub Actions Bot <actions@github.com>
-    steps:
+        username: 'ken7875'
+        reponame: 'test'
+        token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+        steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+        - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
+        - name: Run a one-line script
         run: echo Hello, world!
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+        - name: Run a multi-line script
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
