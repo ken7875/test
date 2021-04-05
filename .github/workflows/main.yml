@@ -1,14 +1,30 @@
-name: Build Vue
-on: [push]
+name: Deploy on new content dispatch
+on:
+  repository_dispatch:
+    types: [merge-content]
+
 jobs:
-  build_vue:
+  mergeContent:
     runs-on: ubuntu-latest
-    name: Build Vue
     steps:
     - uses: actions/checkout@v2
-    - id: Build-Vue
-      uses: ashkantaravati/NuxtToGithubPages@v1.0
+    - name: Clone submodules
+      uses: actions/checkout@v2
       with:
-        username: 'ken7875'
-        reponame: 'test'
-        token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+        token: ${{ secrets.DISPATCH_HOOK_TOKEN }}
+        submodules: true
+
+    - name: Update submodules content
+      run: git submodule update --remote --recursive  
+    - name: Pull the content
+      run: git pull
+    - name: Update submodules index
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        # Required
+        commit_message: Update submodule
+
+        # Optional commit user and author settings
+        commit_user_name: My GitHub Actions Bot
+        commit_user_email: actions@github.com # to change
+        commit_author: My GitHub Actions Bot <actions@github.com>
